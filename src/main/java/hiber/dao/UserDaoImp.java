@@ -1,12 +1,13 @@
 package hiber.dao;
 
-import hiber.model.Car;
 import hiber.model.User;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -16,11 +17,15 @@ public class UserDaoImp implements UserDao {
    private SessionFactory sessionFactory;
 
    @Override
+   @Transactional
    public void add(User user) {
       sessionFactory.getCurrentSession().save(user);
    }
 
+
+
    @Override
+   @Transactional
    @SuppressWarnings("unchecked")
    public List<User> listUsers() {
       TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
@@ -28,11 +33,13 @@ public class UserDaoImp implements UserDao {
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public User getUserByCar(Car car) {
-      String hql = "from User user where user.car.model = :model and user.car.series = :series";
-      TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery(hql);
-      query.setParameter("model", car.getModel()).setParameter("series", car.getSeries());
-      return query.setMaxResults(1).getSingleResult();
+   @Transactional
+   public List<User> getUserByCar(String model, int series) {
+
+      Session session = sessionFactory.getCurrentSession();
+      String HQL = "FROM User as u WHERE u.car.model =:model AND u.car.series =:series";
+      TypedQuery<User> query = session.createQuery(HQL, User.class).setParameter("model", model)
+              .setParameter("series", series);
+      return query.getResultList();
    }
 }

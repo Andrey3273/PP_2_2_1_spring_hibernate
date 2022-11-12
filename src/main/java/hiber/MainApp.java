@@ -3,9 +3,9 @@ package hiber;
 import hiber.config.AppConfig;
 import hiber.model.Car;
 import hiber.model.User;
-import hiber.service.CarService;
 import hiber.service.UserService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 
 import java.sql.SQLException;
 import java.util.List;
@@ -16,7 +16,6 @@ public class MainApp {
               new AnnotationConfigApplicationContext(AppConfig.class);
 
       UserService userService = context.getBean(UserService.class);
-      CarService carService = context.getBean(CarService.class);
 
       User user1 = new User("User1", "LastName1", "user1@mail.ru");
       User user2 = new User("User2", "LastName2", "user2@mail.ru");
@@ -28,27 +27,36 @@ public class MainApp {
       Car car3 = new Car("Car3", 3);
       Car car4 = new Car("Car4", 4);
 
-      carService.add(car1);
-      carService.add(car2);
-      carService.add(car3);
-      carService.add(car4);
+      user1.setCar(car1);
+      user2.setCar(car2);
+      user3.setCar(car3);
+      user4.setCar(car4);
 
-      List<Car> cars = carService.listCars();
-      for (Car car : cars) {
-         System.out.println(car.toString());
-      }
-
-      userService.add(user1.setCar(car1).setUser(user1));
-      userService.add(user2.setCar(car2).setUser(user2));
-      userService.add(user3.setCar(car3).setUser(user3));
-      userService.add(user4.setCar(car4).setUser(user4));
+      userService.add(user1);
+      userService.add(user2);
+      userService.add(user3);
+      userService.add(user4);
 
       List<User> users = userService.listUsers();
       for (User user : users) {
-         System.out.println(user.toString());
+         System.out.println("Id = " + user.getId());
+         System.out.println("First Name = " + user.getFirstName());
+         System.out.println("Last Name = " + user.getLastName());
+         System.out.println("Email = " + user.getEmail());
+         System.out.println("Model = " + user.getCar().getModel());
+         System.out.println("Series = " + user.getCar().getSeries());
+         System.out.println();
       }
 
-      System.out.println(userService.getUserByCar(car4).toString());
+      List<User> users2 = userService.getUserByCar("Car1", 1);
+      for (User user : users2) {
+         System.out.println("Id = " + user.getId());
+         System.out.println("First Name = " + user.getFirstName());
+         System.out.println("Last Name = " + user.getLastName());
+         System.out.println("Email = " + user.getEmail());
+         System.out.println();
+      }
       context.close();
    }
+
 }

@@ -8,17 +8,17 @@ import java.util.Objects;
 @Table(name = "cars")
 public class Car {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-
     @Column(name = "model")
     private String model;
 
     @Column(name = "series")
     private int series;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+
+    @OneToOne
     private User user;
 
     public Car() {
@@ -27,14 +27,6 @@ public class Car {
     public Car(String model, int series) {
         this.model = model;
         this.series = series;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getModel() {
@@ -53,13 +45,20 @@ public class Car {
         this.series = series;
     }
 
-    public User getUser(User user1) {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
         return user;
     }
 
-    public User setUser(User user) {
+    public void setUser(User user) {
         this.user = user;
-        return user;
     }
 
     @Override
@@ -73,13 +72,13 @@ public class Car {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Car)) return false;
         Car car = (Car) o;
-        return series == car.series && Objects.equals(id, car.id) && Objects.equals(model, car.model) && Objects.equals(user, car.user);
+        return series == car.series && model.equals(car.model);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, model, series, user);
+        return Objects.hash(model, series);
     }
 }
